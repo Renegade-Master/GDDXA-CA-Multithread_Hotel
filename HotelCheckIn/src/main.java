@@ -9,5 +9,9 @@ public class main {
         javaHotel = new Hotel(rooms);
 
         System.out.println("The Java Hotel:\n" + javaHotel.toString());
+        
+        for(var t : args) {
+            System.out.println(t);
+        }
     }
 }
