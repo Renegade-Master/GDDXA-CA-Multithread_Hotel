@@ -15,8 +15,8 @@ public class Hotel {
     public Hotel(int[] rooms) {
         _rooms = new ArrayList<Room>();
 
-        for (int room : rooms) {
-            _rooms.add(new Room(room));
+        for (int roomNum : rooms) {
+            _rooms.add(new Room(roomNum));
         }
     }
 
@@ -61,7 +61,7 @@ public class Hotel {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder()
-                .append("Room Count: " + this._rooms.size())
+                .append("Room Count: ").append(this._rooms.size())
                 .append("\nRooms: ");
 
         for (Room rm : this._rooms) {

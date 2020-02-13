@@ -1,5 +1,14 @@
+/**
+ * Ciaran Bent [K00221230]
+ * Concurrent & Distributed Systems - Assignment 01
+ * Java JavaHotel main
+ */
+
 import JavaHotel.Hotel;
 
+/*
+    Read from file, or generate booking randomly.  Dev choice.
+ */
 public class main {
     static Hotel javaHotel;
 

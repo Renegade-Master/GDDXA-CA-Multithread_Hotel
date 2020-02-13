@@ -1,3 +1,9 @@
+/**
+ * Ciaran Bent [K00221230]
+ * Concurrent & Distributed Systems - Assignment 01
+ * Java JavaHotel.Room
+ */
+
 package JavaHotel;
 
 public class Room {
