@@ -9,7 +9,7 @@ import JavaHotel.Hotel;
 /*
     Read from file, or generate booking randomly.  Dev choice.
  */
-public class main {
+public class Main {
     static Hotel javaHotel;
 
     public static void main (String[] args) {
