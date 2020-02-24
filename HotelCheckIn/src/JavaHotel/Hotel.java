@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hotel {
-    private List<Booking> _bookings;
-    private List<Room> _rooms;
+    private final List<Booking> _bookings;
+    private final List<Room> _rooms;
 
     public Hotel(int[] rooms) {
         _bookings = new ArrayList<Booking>();
@@ -28,20 +28,21 @@ public class Hotel {
     }
 
     public boolean bookRoom(String bookingRef, int[] days, int roomNum) {
-        Booking newBooking = new Booking(
-                bookingRef,
-                days,
-                roomNum);
+        throw new UnsupportedOperationException();
+//        Booking newBooking = new Booking(
+//                bookingRef,
+//                days,
+//                roomNum);
 
-        for (Booking existingBooking : _bookings) {
-            for (int day : newBooking.get_bookedDays()) {
-                for (int _day : days) {
-                    if (_day ==) {
-
-                    }
-                }
-            }
-        }
+//        for (Booking existingBooking : _bookings) {
+//            for (int day : newBooking.get_bookedDays()) {
+//                for (int _day : days) {
+//                    if (_day ==) {
+//
+//                    }
+//                }
+//            }
+//        }
     }
 
     public boolean updateBooking(String bookingRef, int[] days, int roomNum) {
@@ -80,7 +81,7 @@ public class Hotel {
 
         for (Room rm : this._rooms) {
             sb.append("\n\t")
-                .append(rm.toString());
+                    .append(rm.toString());
         }
 
         return sb.toString();
