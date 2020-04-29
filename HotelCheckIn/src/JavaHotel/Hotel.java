@@ -31,14 +31,18 @@ public class Hotel {
     }
 
 
-    public boolean roomBooked(int[] days, int roomNum) {
-        for (var booking : this._bookings) {
-            
-        }
-
-        for (var i : days) {
-            if (this._rooms.get(roomNum).isBooked()) {
-                return true;
+    public boolean roomBooked(int[] days_, int roomNum_) {
+        for (var booking : this._bookings) {                    // Search the Bookings
+            for (var room : booking.get_rooms()) {              // Search the Rooms in that Booking
+                if (room == roomNum_) {                         // If the room is the requested room
+                    for (var _day : booking.get_bookedDays()) { // Search the days that the room is booked
+                        for (var day_ : days_) {                // Search the days requested to book
+                            if (_day == day_) {                 // If any day is the same day
+                                return true;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -46,9 +50,15 @@ public class Hotel {
     }
 
 
-    public boolean bookRoom(String bookingRef, int[] days, int roomNum) {
+    public boolean bookRoom(String bookingRef_, int[] days_, int roomNum_) {
+        Booking newBooking = new Booking(
+                bookingRef_,
+                days_,
+                roomNum_);
 
-        throw new UnsupportedOperationException();
+        _bookings.add(newBooking);
+
+        return true;
     }
 
 
@@ -91,7 +101,10 @@ public class Hotel {
 
 
     /* My functions */
-    public int roomCount() { return this._rooms.size(); }
+    public int roomCount() {
+        return this._rooms.size();
+    }
+
 
     @Override
     public String toString() {

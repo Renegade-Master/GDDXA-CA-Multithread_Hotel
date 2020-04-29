@@ -6,6 +6,8 @@
 
 import JavaHotel.Hotel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -13,10 +15,12 @@ import java.util.Random;
     Read from file, or generate booking randomly.  Dev choice.
  */
 public class Main {
-    static final int MAX_ROOMS = 1000;
+    static final int MAX_ROOMS = 50;            // 1000 Rooms
     static final int MIN_ROOMS = 10;
     static final int MAX_BOOKING_DURATION = 91; // 3 Months
     static final int FUTURE_LIMIT = 18262;      // 50 Years
+    static final double FILL_PERCENT = 0.7;
+    static final int USER_COUNT = 10;
 
 
     public static void main(String[] args) {
@@ -56,6 +60,14 @@ public class Main {
 
 
     private static void runMultiThreadedSimulation(Hotel hotel) {
+        List<Thread> users = new ArrayList<Thread>();
+        for (int i = 0; i < USER_COUNT; i++) {
+            users.add(new Thread());
+        }
+
+        for (var user : users) {
+            user.start();
+        }
 
     }
 
@@ -66,13 +78,14 @@ public class Main {
         int[] bookingSpan = null;
         String bookingRef = null;
 
-        for(int i = 0; i < hotel.roomCount(); i++) {
+        for (int i = 0; i < (int)(hotel.roomCount() * FILL_PERCENT); i++) {
             roomChoice = rand.nextInt(hotel.roomCount() - 1);
             bookingSpan = createBookingDuration();
             bookingRef = createBookingRef();
 
             if (!hotel.roomBooked(bookingSpan, roomChoice)) {
-                hotel.bookRoom(bookingRef, bookingSpan, roomChoice);
+                if (hotel.bookRoom(bookingRef, bookingSpan, roomChoice))
+                    System.out.println("Room " + roomChoice + " Booked!");
             }
         }
     }
