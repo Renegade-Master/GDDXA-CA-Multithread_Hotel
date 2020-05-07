@@ -20,8 +20,8 @@ public class Main {
 
     public static void main(String[] args) {
         Hotel javaHotel;
-        int[] rooms = null;
-        User[] users = null;
+        int[] rooms;
+        User[] users;
 
         // Set up the Hotel
         if (args.length > 0) {
@@ -55,7 +55,7 @@ public class Main {
             users[i] = new User(javaHotel, i);
         }
 
-        System.out.println("\nThe Java Hotel Before:\n" + javaHotel.toString());
+        //System.out.println("\nThe Java Hotel Before:\n" + javaHotel.toString());
 
         try {
             // Run the simulation

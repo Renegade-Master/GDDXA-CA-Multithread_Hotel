@@ -18,7 +18,7 @@ public class User extends Thread {
     final int BOOKING_ATTEMPTS = 3;         //
 
     // Thread Variables
-    Hotel hotel;
+    final Hotel hotel;
 
 
     public User(Hotel hotel, int count) {
@@ -26,7 +26,7 @@ public class User extends Thread {
         this.setName("User #" + count);
         this.hotel = hotel;
 
-        System.out.println("User initialised");
+        //System.out.println("User initialised");
     }
 
 
@@ -59,15 +59,15 @@ public class User extends Thread {
     // Non-Thread Methods
     private boolean attemptToBook() {
         Random rand = new Random();
-        int roomChoice = Integer.MIN_VALUE;
-        int[] bookingSpan = null;
-        String bookingRef = null;
+        int roomChoice;
+        int[] bookingSpan;
+        String bookingRef;
 
 
         roomChoice = rand.nextInt(hotel.roomCount() - 1);
         bookingSpan = createBookingDuration();
 
-        boolean newRef = false;
+        boolean newRef;
         do {
             newRef = true;
             bookingRef = createBookingRef();
@@ -81,11 +81,12 @@ public class User extends Thread {
         } while (!newRef);
 
         if (!hotel.roomBooked(bookingSpan, roomChoice)) {
-            if (hotel.bookRoom(bookingRef, bookingSpan, roomChoice))
-                System.out.println("Room " + roomChoice + " Booked Successfully!");
+            if (hotel.bookRoom(bookingRef, bookingSpan, roomChoice)) {
+                System.out.println("[" + this.getName() + "] Booked Room " + roomChoice + " Successfully!");
+            }
             return true;
         } else {
-            System.out.println("Room " + roomChoice + " is booked on one of those days.  Better luck next time.");
+            System.out.println("Sorry [" + this.getName() + "], Room " + roomChoice + " is booked on one of those days.  Better luck next time.");
             return false;
         }
     }
@@ -93,10 +94,10 @@ public class User extends Thread {
 
     private int[] createBookingDuration() {
         Random rand = new Random();
-        int startDate = Integer.MAX_VALUE;
-        int endDate = Integer.MIN_VALUE;
-        int duration = Integer.MIN_VALUE;
-        int[] bookingDates = null;
+        int startDate;
+        int endDate;
+        int duration;
+        int[] bookingDates;
 
         // Don't book backwards in time, or for an unreasonable amount of time
         do {

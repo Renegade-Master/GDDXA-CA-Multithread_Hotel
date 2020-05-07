@@ -23,9 +23,7 @@ public class Room {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder()
-                .append("Room Number ").append(this._roomNumber);
 
-        return sb.toString();
+        return "Room Number " + this._roomNumber;
     }
 }

@@ -17,8 +17,8 @@ public class Hotel {
 
 
     public Hotel(int[] rooms) {
-        _rooms = new ArrayList<Room>();
-        _bookings = new ArrayList<Booking>();
+        _rooms = new ArrayList<>();
+        _bookings = new ArrayList<>();
 
         for (int roomNum : rooms) {
             _rooms.add(new Room(roomNum));
@@ -26,12 +26,12 @@ public class Hotel {
     }
 
 
-    public boolean roomBooked(int[] days_, int roomNum_) {
+    public boolean roomBooked(int[] daysToBook_, int roomNumToBook_) {
         for (var booking : this._bookings) {                    // Search the Bookings
             for (var room : booking.get_rooms()) {              // Search the Rooms in that Booking
-                if (room == roomNum_) {                         // If the room is the requested room
+                if (room.get_roomNumber() == roomNumToBook_) {  // If the room is the requested room
                     for (var _day : booking.get_bookedDays()) { // Search the days that the room is booked
-                        for (var day_ : days_) {                // Search the days requested to book
+                        for (var day_ : daysToBook_) {          // Search the days requested to book
                             if (_day == day_) {                 // If any day is the same day
                                 return true;
                             }
@@ -50,8 +50,12 @@ public class Hotel {
                 bookingRef_,
                 days_,
                 roomNum_);
-
-        _bookings.add(newBooking);
+        try {
+            _bookings.add(newBooking);
+        } catch (Exception e) {
+            System.err.println("Problem booking a room: " + e);
+            return false;
+        }
 
         return true;
     }

@@ -9,21 +9,25 @@ package JavaHotel;
 
 public class Booking {
     private final String _reference;
-    private final int[] _rooms;
+    private final Room[] _rooms;
     private final int[] _bookedDays;
 
 
     public Booking(String ref, int[] days, int roomNum) {
         this._reference = ref;
         this._bookedDays = days;
-        this._rooms = new int[]{roomNum};
+        this._rooms = new Room[] { new Room(roomNum) };
     }
 
 
     public Booking(String ref, int[] days, int[] roomNums) {
         this._reference = ref;
         this._bookedDays = days;
-        this._rooms = roomNums;
+
+        this._rooms = new Room[roomNums.length];
+        for (int i = 0; i < _rooms.length; i++) {
+            this._rooms[i] = new Room(roomNums[i]);
+        }
     }
 
 
@@ -32,7 +36,7 @@ public class Booking {
     }
 
 
-    public int[] get_rooms() {
+    public Room[] get_rooms() {
         return _rooms;
     }
 
@@ -51,7 +55,7 @@ public class Booking {
 
         for (var rm : this._rooms) {
             sb.append("\t#")
-                    .append(rm);
+                    .append(rm.get_roomNumber());
         }
 
         sb.append("\n\tDates Booked: ").append(this._bookedDays.length).append("\n\t");
