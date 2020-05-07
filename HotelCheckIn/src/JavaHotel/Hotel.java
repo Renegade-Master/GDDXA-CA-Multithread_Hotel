@@ -15,6 +15,7 @@ public class Hotel {
     private final List<Room> _rooms;
     private final List<Booking> _bookings;
 
+
     public Hotel(int[] rooms) {
         _rooms = new ArrayList<Room>();
         _bookings = new ArrayList<Booking>();
