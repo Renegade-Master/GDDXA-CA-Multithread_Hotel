@@ -15,12 +15,12 @@ import java.util.Random;
     Read from file, or generate booking randomly.  Dev choice.
  */
 public class Main {
-    static final int MAX_ROOMS = 50;            // 1000 Rooms
+    static final int MAX_ROOMS = 30;
     static final int MIN_ROOMS = 10;
-    static final int MAX_BOOKING_DURATION = 91; // 3 Months
-    static final int FUTURE_LIMIT = 18262;      // 50 Years
-    static final double FILL_PERCENT = 0.7;
-    static final int USER_COUNT = 10;
+    static final int MAX_BOOKING_DURATION = 31; // 1 Month
+    //static final int FUTURE_LIMIT = 1826;       // 5 Years
+    static final int FUTURE_LIMIT = 365;        // 1 Year
+    static final int USER_COUNT = 100;          // Customers
 
 
     public static void main(String[] args) {
@@ -51,11 +51,12 @@ public class Main {
 
         javaHotel = new Hotel(rooms);
 
-        System.out.println("The Java Hotel Before:\n" + javaHotel.toString());
+        System.out.println("\nThe Java Hotel Before:\n" + javaHotel.toString());
 
+        // Run the simulation
         runSingleThreadedSimulation(javaHotel);
 
-        System.out.println("The Java Hotel After:\n" + javaHotel.toString());
+        System.out.println("\nThe Java Hotel After:\n" + javaHotel.toString());
     }
 
 
@@ -78,25 +79,40 @@ public class Main {
         int[] bookingSpan = null;
         String bookingRef = null;
 
-        for (int i = 0; i < (int)(hotel.roomCount() * FILL_PERCENT); i++) {
+        for (int i = 0; i < USER_COUNT; i++) {
             roomChoice = rand.nextInt(hotel.roomCount() - 1);
             bookingSpan = createBookingDuration();
-            bookingRef = createBookingRef();
+
+            boolean newRef = false;
+            do {
+                newRef = true;
+                bookingRef = createBookingRef();
+
+                for (var bk : hotel.get_bookings()) {
+                    if (bk.get_reference().equals(bookingRef)) {
+                        newRef = false;
+                        break;
+                    }
+                }
+            } while(!newRef);
 
             if (!hotel.roomBooked(bookingSpan, roomChoice)) {
                 if (hotel.bookRoom(bookingRef, bookingSpan, roomChoice))
-                    System.out.println("Room " + roomChoice + " Booked!");
+                    System.out.println("Room " + roomChoice + " Booked Successfully!");
+            } else {
+                System.out.println("Room " + roomChoice + " is booked on one of those days.  Better luck next time.");
             }
+
         }
     }
 
 
     private static int[] createBookingDuration() {
         Random rand = new Random();
-        int startDate = Integer.MAX_VALUE;  // 0 is 1970-01-01
-        int endDate = Integer.MIN_VALUE;    // No defined end date
+        int startDate = Integer.MAX_VALUE;
+        int endDate = Integer.MIN_VALUE;
         int duration = Integer.MIN_VALUE;
-        int[] booking = null;
+        int[] bookingDates = null;
 
         // Don't book backwards in time, or for an unreasonable amount of time
         do {
@@ -104,22 +120,21 @@ public class Main {
             endDate = rand.nextInt(FUTURE_LIMIT) + startDate;
         } while ((startDate > endDate) || ((endDate - startDate) > MAX_BOOKING_DURATION));
 
+        // Get the duration of the Booking
         duration = endDate - startDate;
-        booking = new int[duration];
+        bookingDates = new int[duration];
 
-        int i = 0;
-        for (var ignored : booking) {
-            booking[i] = i++;
+        for (int i = 0; i < bookingDates.length; i++) {
+            bookingDates[i] = startDate++;
         }
 
-        return booking;
+        return bookingDates;
     }
 
 
     private static String createBookingRef() {
         Random rand = new Random();
 
-        return String.valueOf(rand.nextLong()) +
-                rand.nextLong();
+        return String.valueOf(Math.abs(rand.nextLong()));
     }
 }

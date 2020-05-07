@@ -15,12 +15,6 @@ public class Hotel {
     private final List<Room> _rooms;
     private final List<Booking> _bookings;
 
-    /*  ToDo: write a class which stores information about the relationship
-         between BOOKING REFERENCES (Strings), ROOMS (ints), and which DAYS they
-         are booked for (ints)
-     */
-
-
     public Hotel(int[] rooms) {
         _rooms = new ArrayList<Room>();
         _bookings = new ArrayList<Booking>();
@@ -88,7 +82,7 @@ public class Hotel {
     }
 
 
-    public boolean _updateBooking(String bookingRef, int[] days, int[] roomNums) {
+    public boolean _updateBooking(String bookingRef, int[] days, int[] roomNums) throws NoSuchBookingException {
 
         throw new UnsupportedOperationException();
     }
@@ -106,16 +100,34 @@ public class Hotel {
     }
 
 
+    public List<Booking> get_bookings() {
+        return _bookings;
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder()
                 .append("Room Count: ").append(this._rooms.size())
                 .append("\nRooms: ");
 
-        for (Room rm : this._rooms) {
+        for (var rm : this._rooms) {
             sb.append("\n\t")
                     .append(rm.toString());
         }
+
+        if (this._bookings.size() > 0) {
+            sb.append("\nBookings: ").append(this._bookings.size());
+
+            for (var bk : this._bookings) {
+                sb.append("\n\t")
+                        .append(bk.toString());
+            }
+        } else {
+            sb.append("\nThere are currently no Bookings.");
+        }
+
+        sb.append("\n");
 
         return sb.toString();
     }

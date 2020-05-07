@@ -40,4 +40,28 @@ public class Booking {
     public int[] get_bookedDays() {
         return _bookedDays;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder()
+                .append("Reference:\n\t\t#").append(this._reference);
+
+        sb.append("\n\tRooms Booked: ").append(this._rooms.length).append("\n\t");
+
+        for (var rm : this._rooms) {
+            sb.append("\t#")
+                    .append(rm);
+        }
+
+        sb.append("\n\tDates Booked: ").append(this._bookedDays.length).append("\n\t");
+
+        for (var dt : this._bookedDays) {
+            sb.append("\t")
+                    .append(dt);
+        }
+
+        sb.append("\n");
+
+        return sb.toString();
+    }
 }
