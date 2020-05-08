@@ -15,7 +15,7 @@ import java.util.Random;
 public class Main {
     static final int MAX_ROOMS = 30;
     static final int MIN_ROOMS = 10;
-    static final int USER_COUNT = 50;   // Customers
+    static final int USER_COUNT = 1000;   // Customers
 
 
     public static void main(String[] args) {
@@ -60,13 +60,14 @@ public class Main {
         try {
             // Run the simulation
             for (var user : users) {
+                //System.out.println("Starting user [" + user.getName() + "]");
                 user.start();
             }
 
             // Complete the simulation
             for (var user : users) {
-                //user.join(5000);
                 user.join(0);
+                //System.out.println("User [" + user.getName() + "] stopped");
             }
         } catch (InterruptedException ie) {
             System.err.println("Users Booking a Room has encountered an error @Main.main: \n\t" + ie);
