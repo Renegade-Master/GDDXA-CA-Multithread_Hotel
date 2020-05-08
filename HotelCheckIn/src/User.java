@@ -6,6 +6,7 @@
 
 
 import JavaHotel.Hotel;
+import JavaHotel.NoSuchBookingException;
 
 import java.util.Random;
 
@@ -18,6 +19,7 @@ public class User extends Thread {
 
     // Thread Variables
     private final Hotel hotel;
+    private String myBookingRef;
 
 
     public User(Hotel hotel, int count) {
@@ -31,12 +33,29 @@ public class User extends Thread {
 
     // Thread Methods
     public void run() {
+        Random rand = new Random();
+        boolean bookedSuccessfully = false;
         try {
             for (int i = 0; i < BOOKING_ATTEMPTS; i++) {
                 if (!attemptToBook()) {
-                    sleep(100); // Unsuccessful booking, try again
+                    sleep(50); // Unsuccessful booking, try again
                 } else {
-                    return; // Booked successfully
+                    bookedSuccessfully = true;
+                    break; // Booked successfully
+                }
+            }
+
+            if (bookedSuccessfully && myBookingRef != null) {
+                // Small chance to decide to change the booking
+//                if (rand.nextInt(100) < 7) {
+//                    //System.out.println("[" + this.getName() + "] has changed their mind and wishes to change");
+//                    attemptToUpdate();
+//                }
+
+                // Small chance to decide to cancel the booking
+                if (rand.nextInt(100) < 3) {
+                    //System.out.println("[" + this.getName() + "] has changed their mind and wishes to cancel");
+                    attemptToCancel();
                 }
             }
         } catch (Exception e) {
@@ -45,14 +64,20 @@ public class User extends Thread {
     }
 
 
+    private static String createBookingRef() {
+        Random rand = new Random();
+
+        return String.valueOf(Math.abs(rand.nextLong()));
+    }
+
+
     // Non-Thread Methods
-    private boolean attemptToBook() {
+    private boolean attemptToBook() throws InterruptedException {
         Random rand = new Random();
         int roomChoice;
         int[] bookingSpan;
         String bookingRef;
 
-        int attemptsToBook = 0;
         boolean bookingSuccess;
         do {
             bookingSuccess = false;
@@ -77,6 +102,8 @@ public class User extends Thread {
                     } finally {
                         hotel.lock_hotel.unlock();
                     }
+                } else {
+                    sleep(50);
                 }
             } while (!newRef);
 
@@ -85,11 +112,12 @@ public class User extends Thread {
                 try {
                     if (!hotel.roomBooked(bookingSpan, roomChoice)) {
                         if (hotel.bookRoom(bookingRef, bookingSpan, roomChoice)) {
-                            System.out.println("[" + this.getName() + "] Booked Room " + roomChoice + " Successfully!");
+                            //System.out.println("[" + this.getName() + "] Booked Room " + roomChoice + " Successfully with BookingRef [#" + bookingRef + "]!");
+                            myBookingRef = bookingRef;
                             bookingSuccess = true;
                         }
                     } else {
-                        System.out.println("Sorry [" + this.getName() + "], Room " + roomChoice + " is booked on one of those days.  Better luck next time.");
+                        //System.out.println("Sorry [" + this.getName() + "], Room " + roomChoice + " is booked on one of those days.  Better luck next time.");
                         bookingSuccess = false;
                     }
                 } catch (Exception e) {
@@ -97,18 +125,37 @@ public class User extends Thread {
                 } finally {
                     hotel.lock_hotel.unlock();
                 }
+            } else {
+                sleep(50);
             }
-            attemptsToBook++;
-        } while (!bookingSuccess && attemptsToBook < BOOKING_ATTEMPTS);
+        } while (!bookingSuccess);
 
         return true;
     }
 
 
-    private static String createBookingRef() {
-        Random rand = new Random();
+    private void attemptToUpdate() {
+        throw new UnsupportedOperationException();
+    }
 
-        return String.valueOf(Math.abs(rand.nextLong()));
+
+    private void attemptToCancel() throws InterruptedException {
+        boolean cancelSuccessful = false;
+
+        do {
+            if (hotel.lock_hotel.tryLock()) {
+                try {
+                    hotel.cancelBooking(myBookingRef);
+                } catch (NoSuchBookingException nsbe) {
+                    System.err.println(nsbe.getMessage());
+                } finally {
+                    cancelSuccessful = true;
+                    hotel.lock_hotel.unlock();
+                }
+            } else {
+                sleep(50);
+            }
+        } while (!cancelSuccessful);
     }
 
 

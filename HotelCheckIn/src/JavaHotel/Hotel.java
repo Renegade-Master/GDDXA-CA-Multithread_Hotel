@@ -74,8 +74,11 @@ public class Hotel {
 
 
     public void cancelBooking(String bookingRef) throws NoSuchBookingException {
-
-        throw new UnsupportedOperationException();
+        if (!this._bookings.removeIf(booking -> booking.get_reference().equals(bookingRef))) {
+            throw new NoSuchBookingException(bookingRef);
+        } else {
+            System.out.println("Booking [#" + bookingRef + "] cancelled successfully!");
+        }
     }
 
     /* Bonus Functions */
