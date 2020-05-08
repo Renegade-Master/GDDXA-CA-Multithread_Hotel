@@ -65,6 +65,7 @@ public class Main {
 
             // Complete the simulation
             for (var user : users) {
+                //user.join(5000);
                 user.join(0);
             }
         } catch (InterruptedException ie) {

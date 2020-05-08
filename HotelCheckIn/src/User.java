@@ -18,7 +18,7 @@ public class User extends Thread {
     final int BOOKING_ATTEMPTS = 3;         //
 
     // Thread Variables
-    final Hotel hotel;
+    private final Hotel hotel;
 
 
     public User(Hotel hotel, int count) {
@@ -49,9 +49,6 @@ public class User extends Thread {
             }
         } catch (Exception e) {
             System.err.println("[" + this.getName() + "] has encountered an [" + e.getClass() + "] error @User.run: \n\t" + e);
-        } finally {
-            // Do something to signify Thread failure
-            this.interrupt();
         }
     }
 
@@ -72,14 +69,26 @@ public class User extends Thread {
             newRef = true;
             bookingRef = createBookingRef();
 
-            for (var bk : hotel.get_bookings()) {
-                if (bk.get_reference().equals(bookingRef)) {
-                    newRef = false;
-                    break;
+            // Check if the booking already exists
+            if (hotel.lock_hotel.tryLock()) {
+                try {
+                    hotel.readBookings.await();
+                    for (var bk : hotel.get_bookings()) {
+                        if (bk.get_reference().equals(bookingRef)) {
+                            newRef = false;
+                            break;
+                        }
+                    }
+                    hotel.readBookings.signalAll();
+                } catch (InterruptedException ie) {
+                    ie.printStackTrace();
+                } finally {
+                    hotel.lock_hotel.unlock();
                 }
             }
         } while (!newRef);
 
+        // Attempt to create the booking
         if (!hotel.roomBooked(bookingSpan, roomChoice)) {
             if (hotel.bookRoom(bookingRef, bookingSpan, roomChoice)) {
                 System.out.println("[" + this.getName() + "] Booked Room " + roomChoice + " Successfully!");

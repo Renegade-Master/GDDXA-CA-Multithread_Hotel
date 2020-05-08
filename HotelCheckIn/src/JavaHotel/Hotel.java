@@ -9,9 +9,15 @@ package JavaHotel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 public class Hotel {
+    public final Lock lock_hotel = new ReentrantLock();
+    public final Condition addNewBooking = lock_hotel.newCondition();
+    public final Condition readBookings = lock_hotel.newCondition();
     private final List<Room> _rooms;
     private final List<Booking> _bookings;
 
