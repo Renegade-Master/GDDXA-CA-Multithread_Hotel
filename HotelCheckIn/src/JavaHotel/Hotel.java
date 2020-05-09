@@ -8,6 +8,7 @@ package JavaHotel;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -24,7 +25,7 @@ public class Hotel {
 
     public Hotel(int[] rooms) {
         _rooms = new ArrayList<>();
-        _bookings = new ArrayList<>();
+        _bookings = Collections.synchronizedList(new ArrayList<>()); // Suggestion from ArrayList Oracle API
 
         for (int roomNum : rooms) {
             _rooms.add(new Room(roomNum));
@@ -68,8 +69,29 @@ public class Hotel {
 
 
     public boolean updateBooking(String bookingRef, int[] days, int roomNum) throws NoSuchBookingException {
+        boolean bookingExists = false;
+        int index = -1;
 
-        throw new UnsupportedOperationException();
+        for (var bk : this._bookings) {
+            if (bk.get_reference().equals(bookingRef)) {
+                bookingExists = true;
+                index = this._bookings.indexOf(bk);
+                break;
+            }
+            bookingExists = false;
+        }
+
+        if (!bookingExists) {
+            throw new NoSuchBookingException(bookingRef);
+        } else {
+            Booking updtBooking = new Booking(
+                    bookingRef,
+                    days,
+                    roomNum);
+            this._bookings.set(index, updtBooking);
+            System.out.println("Booking [#" + bookingRef + "] updated successfully!");
+            return true;
+        }
     }
 
 

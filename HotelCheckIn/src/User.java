@@ -5,6 +5,7 @@
  */
 
 
+import JavaHotel.Booking;
 import JavaHotel.Hotel;
 import JavaHotel.NoSuchBookingException;
 
@@ -47,10 +48,10 @@ public class User extends Thread {
 
             if (bookedSuccessfully && myBookingRef != null) {
                 // Small chance to decide to change the booking
-//                if (rand.nextInt(100) < 7) {
-//                    //System.out.println("[" + this.getName() + "] has changed their mind and wishes to change");
-//                    attemptToUpdate();
-//                }
+                if (rand.nextInt(100) < 7) {
+                    //System.out.println("[" + this.getName() + "] has changed their mind and wishes to change");
+                    attemptToUpdate();
+                }
 
                 // Small chance to decide to cancel the booking
                 if (rand.nextInt(100) < 3) {
@@ -134,8 +135,35 @@ public class User extends Thread {
     }
 
 
-    private void attemptToUpdate() {
-        throw new UnsupportedOperationException();
+    private void attemptToUpdate() throws InterruptedException {
+        Random rand = new Random();
+        boolean updateSuccessful = false;
+        int roomChoice = rand.nextInt(hotel.roomCount() - 1);
+        int[] bookingSpan = createBookingDuration();
+
+        do {
+            if (hotel.lock_hotel.tryLock()) {
+                try {
+                    for (var bk : hotel.get_bookings()) {
+                        if (bk.get_reference().equals(myBookingRef)) {
+                            System.out.println("Booking [#" + myBookingRef + "] being updated from: \n\t" + (bk).toString());
+                            break;
+                        }
+                    }
+
+                    if (!hotel.updateBooking(myBookingRef, bookingSpan, roomChoice)) {
+                        updateSuccessful = false;
+                    }
+                } catch (NoSuchBookingException nsbe) {
+                    System.err.println(nsbe.getMessage());
+                } finally {
+                    updateSuccessful = true;
+                    hotel.lock_hotel.unlock();
+                }
+            } else {
+                sleep(50);
+            }
+        } while (!updateSuccessful);
     }
 
 
