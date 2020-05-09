@@ -9,15 +9,22 @@ import JavaHotel.Hotel;
 import java.util.Random;
 
 
-/*
-    Read from file, or generate booking randomly.  Dev choice.
+/**
+ * The Main Class
+ *
+ * The Main Class is for running the Hotel simulation
  */
 public class Main {
-    static final int MAX_ROOMS = 30;
-    static final int MIN_ROOMS = 10;
-    static final int USER_COUNT = 1000;   // Customers
+    static final int MAX_ROOMS = 30;    /**< The maximum number of Rooms that a Hotel can have */
+    static final int MIN_ROOMS = 10;    /**< The minimum number of Rooms that a Hotel can have */
+    static final int USER_COUNT = 1000; /**< The count of Users that will interact with the Hotel */
 
 
+    /**
+     * The main execution point to run the program from.  Callable from command line
+     *
+     * @param args  Command line arguments to be passed to the program.  These are used to build the Rooms of the Hotel
+     */
     public static void main(String[] args) {
         Hotel javaHotel;
         int[] rooms;
