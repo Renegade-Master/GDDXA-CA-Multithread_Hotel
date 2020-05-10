@@ -13,7 +13,7 @@ package JavaHotel;
  * The Room Class contains a simple integer value representing the Room number
  */
 public class Room {
-    private final int _roomNumber; /**< The number for this Room */
+    private final int _roomNumber; //!< The number for this Room
 
 
     /**

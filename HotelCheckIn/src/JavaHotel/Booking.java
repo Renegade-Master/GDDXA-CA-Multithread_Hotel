@@ -14,9 +14,9 @@ package JavaHotel;
  * least one Room, and at least one Day together
  */
 public class Booking {
-    private final String _reference;    /**< The Reference number for this Booking */
-    private final Room[] _rooms;        /**< The Rooms that are assigned to this Booking */
-    private final int[] _bookedDays;    /**< The Days that this Room is booked for */
+    private final String _reference;    //!< The Reference number for this Booking
+    private final Room[] _rooms;        //!< The Rooms that are assigned to this Booking
+    private final int[] _bookedDays;    //!< The Days that this Room is booked for
 
 
     /**

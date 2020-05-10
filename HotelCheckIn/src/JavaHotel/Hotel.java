@@ -21,11 +21,11 @@ import java.util.concurrent.locks.ReentrantLock;
  * A Hotel is a collection of Rooms, with a record for Bookings
  */
 public class Hotel {
-    public final Lock lock_hotel = new ReentrantLock();                 /**< The Lock for controlling access to the Hotel */
-    public final Condition addNewBooking = lock_hotel.newCondition();   /**< A Condition for fine-grained access control */
-    public final Condition readBookings = lock_hotel.newCondition();    /**< A Condition for fine-grained access control */
-    private final List<Room> _rooms;                                    /**< The list of Rooms in the Hotel */
-    private final List<Booking> _bookings;                              /**< The list of Bookings in the Hotel */
+    public final Lock lock_hotel = new ReentrantLock();                 //!< The Lock for controlling access to the Hotel
+    public final Condition addNewBooking = lock_hotel.newCondition();   //!< A Condition for fine-grained access control
+    public final Condition readBookings = lock_hotel.newCondition();    //!< A Condition for fine-grained access control
+    private final List<Room> _rooms;                                    //!< The list of Rooms in the Hotel
+    private final List<Booking> _bookings;                              //!< The list of Bookings in the Hotel
 
 
     /**
@@ -91,7 +91,7 @@ public class Hotel {
             return false;
         }
 
-        System.out.println("Booking [#" + bookingRef + "] booked successfully!");
+        //System.out.println("Booking [#" + bookingRef + "] booked successfully!");
         return true;
     }
 
@@ -145,7 +145,7 @@ public class Hotel {
         if (!this._bookings.removeIf(booking -> booking.get_reference().equals(bookingRef))) {
             throw new NoSuchBookingException(bookingRef);
         } else {
-            System.out.println("Booking [#" + bookingRef + "] cancelled successfully!");
+            //System.out.println("Booking [#" + bookingRef + "] cancelled successfully!");
         }
     }
 
@@ -163,7 +163,7 @@ public class Hotel {
      *
      * @return True if any of the given Rooms are booked on any of the given Days, False if all of them are free
      */
-    public boolean _roomsBooked(int[] days, int[] roomNums) {
+    public boolean roomsBooked(int[] days, int[] roomNums) {
         for (var booking : this._bookings) {                        // Search the Bookings
             for (var room : booking.get_rooms()) {                  // Search the Rooms in that Booking
                 for (var roomNum : roomNums) {                      // Search the Rooms in the requested Rooms
@@ -193,7 +193,7 @@ public class Hotel {
      *
      * @return True if the Booking process was successful, False if it was not
      */
-    public boolean _bookRooms(String bookingRef, int[] days, int[] roomNums) {
+    public boolean bookRooms(String bookingRef, int[] days, int[] roomNums) {
         Booking newBooking = new Booking(
                 bookingRef,
                 days,
@@ -205,7 +205,7 @@ public class Hotel {
             return false;
         }
 
-        System.out.println("Booking [#" + bookingRef + "] booked successfully!");
+        //System.out.println("Booking [#" + bookingRef + "] booked successfully!");
         return true;
     }
 
@@ -221,7 +221,7 @@ public class Hotel {
      *
      * @throws NoSuchBookingException If the given Booking Reference does not exist, throw an Exception
      */
-    public boolean _updateBooking(String bookingRef, int[] days, int[] roomNums) throws NoSuchBookingException {
+    public boolean updateBooking(String bookingRef, int[] days, int[] roomNums) throws NoSuchBookingException {
         boolean bookingExists = false;
         int index = -1;
 
@@ -242,26 +242,26 @@ public class Hotel {
                     days,
                     roomNums);
             this._bookings.set(index, updtBooking);
-            System.out.println("Booking [#" + bookingRef + "] updated successfully!");
+            System.out.println("Booking [#" + bookingRef + "] updated to Multi-Rooms successfully!");
             return true;
         }
     }
 
 
-    /**
-     * Alternative version of the original `cancelBooking` method.  Cancels a booking with multiple Rooms
-     *
-     * @param bookingRef The Reference of the Booking to cancel
-     *
-     * @throws NoSuchBookingException If the given Booking Reference does not exist, throw an Exception
-     */
-    public void _cancelBooking(String bookingRef) throws NoSuchBookingException {
-        if (!this._bookings.removeIf(booking -> booking.get_reference().equals(bookingRef))) {
-            throw new NoSuchBookingException(bookingRef);
-        } else {
-            System.out.println("Booking [#" + bookingRef + "] cancelled successfully!");
-        }
-    }
+//    /**
+//     * Alternative version of the original `cancelBooking` method.  Cancels a booking with multiple Rooms
+//     *
+//     * @param bookingRef The Reference of the Booking to cancel
+//     *
+//     * @throws NoSuchBookingException If the given Booking Reference does not exist, throw an Exception
+//     */
+//    public void cancelBooking(String bookingRef) throws NoSuchBookingException {
+//        if (!this._bookings.removeIf(booking -> booking.get_reference().equals(bookingRef))) {
+//            throw new NoSuchBookingException(bookingRef);
+//        } else {
+//            System.out.println("Booking [#" + bookingRef + "] cancelled successfully!");
+//        }
+//    }
 
 
     ////////////////

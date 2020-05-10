@@ -18,13 +18,20 @@ import java.util.Random;
  */
 public class User extends Thread {
     // Constants
-    final int MAX_BOOKING_DURATION = 21;    /**< The maximum permitted duration for a Booking */
-    final int FUTURE_LIMIT = 365;           /**< The maximum length of time into the future to Book a Room */
-    final int BOOKING_ATTEMPTS = 3;         /**< The maximum amount of attempts a User can have when trying to Book */
+    final int MAX_BOOKING_DURATION = 21;    //!< The maximum permitted duration for a Booking
+    final int MAX_ROOM_COUNT = 3;           //!< The maximum number of Rooms permitted for a Booking
+    final int FUTURE_LIMIT = 365;           //!< The maximum length of time into the future to Book a Room
+    final int BOOKING_ATTEMPTS = 3;         //!< The maximum amount of attempts a User can have when trying to Book
+
+    // User Indecisiveness (Chance out of 100)
+    final int CHANCE_TO_BOOK_MULTI = 33;        //!< The chance to update a booking
+    final int CHANCE_TO_UPDATE = 10;            //!< The chance to update a booking
+    final int CHANCE_TO_UPDATE_TO_MULTI = 7;    //!< The chance to update a booking to Multi-Rooms
+    final int CHANCE_TO_CANCEL = 5;             //!< The chance to cancel a booking
 
     // Thread Variables
-    private final Hotel hotel;              /**< The Hotel that the User is interacting with */
-    private String myBookingRef;            /**< The Reference for the Booking that this User has created */
+    private final Hotel hotel;              //!< The Hotel that the User is interacting with
+    private String myBookingRef;            //!< The Reference for the Booking that this User has created
 
 
     /**
@@ -57,23 +64,42 @@ public class User extends Thread {
         boolean bookedSuccessfully = false;
         try {
             for (int i = 0; i < BOOKING_ATTEMPTS; i++) {
-                if (!attemptToBook()) {
-                    sleep(50); // Unsuccessful booking, try again
+                if(rand.nextInt(100) < CHANCE_TO_BOOK_MULTI) {  // Randomly book one or more rooms
+                    if (!attemptToBook(1)) {
+                        sleep(50);    // Unsuccessful booking, try again
+                    } else {
+                        bookedSuccessfully = true;
+                        break; // Booked successfully
+                    }
                 } else {
-                    bookedSuccessfully = true;
-                    break; // Booked successfully
+                    if (!attemptToBook(rand.nextInt(MAX_ROOM_COUNT) + 1)) {
+                        sleep(50);    // Unsuccessful booking, try again
+                    } else {
+                        bookedSuccessfully = true;
+                        break; // Booked successfully
+                    }
                 }
             }
 
+            sleep(50);  // Give another Thread some time to work
+
             if (bookedSuccessfully && myBookingRef != null) {
+                System.out.println("[" + this.getName() + "] has successfully created Booking [#" + myBookingRef + "]");
+
                 // Small chance to decide to change the booking
-                if (rand.nextInt(100) < 7) {
+                if (rand.nextInt(100) < CHANCE_TO_UPDATE) {
                     //System.out.println("[" + this.getName() + "] has changed their mind and wishes to change");
-                    attemptToUpdate();
+                    attemptToUpdate(1);
+                }
+
+                // Small chance to decide to change the booking to multiple days
+                if (rand.nextInt(100) < CHANCE_TO_UPDATE_TO_MULTI) {
+                    //System.out.println("[" + this.getName() + "] has changed their mind and wishes to change");
+                    attemptToUpdate(rand.nextInt(MAX_ROOM_COUNT) + 1);
                 }
 
                 // Small chance to decide to cancel the booking
-                if (rand.nextInt(100) < 3) {
+                if (rand.nextInt(100) < CHANCE_TO_CANCEL) {
                     //System.out.println("[" + this.getName() + "] has changed their mind and wishes to cancel");
                     attemptToCancel();
                 }
@@ -108,17 +134,15 @@ public class User extends Thread {
      *
      * @throws InterruptedException If the Thread is Interrupted at some point while in this method, throw an Exception
      */
-    private boolean attemptToBook() throws InterruptedException {
-        Random rand = new Random();
-        int roomChoice;
+    private boolean attemptToBook(int roomsToBook) throws InterruptedException {
+        int[] roomChoice;
         int[] bookingSpan;
         String bookingRef;
 
         boolean bookingSuccess;
         do {
             bookingSuccess = false;
-
-            roomChoice = rand.nextInt(hotel.get_roomCount() - 1);
+            roomChoice = createRoomsToBook(roomsToBook);
             bookingSpan = createBookingDuration();
 
             boolean newRef;
@@ -146,15 +170,28 @@ public class User extends Thread {
             // Attempt to create the booking
             if (hotel.lock_hotel.tryLock()) {
                 try {
-                    if (!hotel.roomBooked(bookingSpan, roomChoice)) {
-                        if (hotel.bookRoom(bookingRef, bookingSpan, roomChoice)) {
-                            //System.out.println("[" + this.getName() + "] Booked Room " + roomChoice + " Successfully with BookingRef [#" + bookingRef + "]!");
-                            myBookingRef = bookingRef;
-                            bookingSuccess = true;
+                    if (roomChoice.length == 1) {
+                        if (!hotel.roomBooked(bookingSpan, roomChoice[0])) {
+                            if (hotel.bookRoom(bookingRef, bookingSpan, roomChoice[0])) {
+                                //System.out.println("[" + this.getName() + "] Booked Room " + roomChoice + " Successfully with BookingRef [#" + bookingRef + "]!");
+                                myBookingRef = bookingRef;
+                                bookingSuccess = true;
+                            }
+                        } else {
+                            //System.out.println("Sorry [" + this.getName() + "], Room " + roomChoice + " is booked on one of those days.  Better luck next time.");
+                            bookingSuccess = false;
                         }
                     } else {
-                        //System.out.println("Sorry [" + this.getName() + "], Room " + roomChoice + " is booked on one of those days.  Better luck next time.");
-                        bookingSuccess = false;
+                        if (!hotel.roomsBooked(bookingSpan, roomChoice)) {
+                            if (hotel.bookRooms(bookingRef, bookingSpan, roomChoice)) {
+                                //System.out.println("[" + this.getName() + "] Booked Room " + roomChoice + " Successfully with BookingRef [#" + bookingRef + "]!");
+                                myBookingRef = bookingRef;
+                                bookingSuccess = true;
+                            }
+                        } else {
+                            //System.out.println("Sorry [" + this.getName() + "], Room " + roomChoice + " is booked on one of those days.  Better luck next time.");
+                            bookingSuccess = false;
+                        }
                     }
                 } catch (Exception e) {
                     System.err.println("[" + this.getName() + "] has encountered an [" + e.getClass() + "] error @User.attemptToBook: \n\t" + e);
@@ -175,24 +212,25 @@ public class User extends Thread {
      *
      * @throws InterruptedException If the Thread is Interrupted at some point while in this method, throw an Exception
      */
-    private void attemptToUpdate() throws InterruptedException {
-        Random rand = new Random();
+    private void attemptToUpdate(int roomsToBook) throws InterruptedException {
         boolean updateSuccessful = false;
-        int roomChoice = rand.nextInt(hotel.get_roomCount() - 1);
+        int[] roomChoice = createRoomsToBook(roomsToBook);
         int[] bookingSpan = createBookingDuration();
 
         do {
             if (hotel.lock_hotel.tryLock()) {
                 try {
-                    if (!hotel.roomBooked(bookingSpan, roomChoice)) {
-//                        for (var bk : hotel.get_bookings()) {
-//                            if (bk.get_reference().equals(myBookingRef)) {
-//                                System.out.println("Booking [#" + myBookingRef + "] being updated from: \n\t" + (bk).toString());
-//                                break;
-//                            }
-//                        }
-                        if (!hotel.updateBooking(myBookingRef, bookingSpan, roomChoice)) {
-                            updateSuccessful = false;
+                    if (roomChoice.length == 1) {
+                        if (!hotel.roomBooked(bookingSpan, roomChoice[0])) {
+                            if (!hotel.updateBooking(myBookingRef, bookingSpan, roomChoice[0])) {
+                                updateSuccessful = false;
+                            }
+                        }
+                    } else {
+                        if (!hotel.roomsBooked(bookingSpan, roomChoice)) {
+                            if (!hotel.updateBooking(myBookingRef, bookingSpan, roomChoice)) {
+                                updateSuccessful = false;
+                            }
                         }
                     }
                 } catch (NoSuchBookingException nsbe) {
@@ -205,6 +243,7 @@ public class User extends Thread {
                 sleep(50);
             }
         } while (!updateSuccessful);
+        System.out.println("[" + this.getName() + "] has successfully updated Booking [#" + myBookingRef + "]");
     }
 
 
@@ -230,6 +269,7 @@ public class User extends Thread {
                 sleep(50);
             }
         } while (!cancelSuccessful);
+        System.out.println("[" + this.getName() + "] has successfully cancelled Booking [#" + myBookingRef + "]");
     }
 
 
@@ -264,5 +304,36 @@ public class User extends Thread {
         }
 
         return bookingDates;
+    }
+
+
+    /**
+     * Creates a randomised choice of Room Numbers for booking
+     *
+     * @param roomCount The count of Room Numbers to generate
+     * @return  An array of Integer values for the Room Numbers
+     */
+    private int[] createRoomsToBook(int roomCount) {
+        Random rand = new Random();
+        boolean allRoomsNew;
+        int[] roomsToBook = new int[roomCount];
+
+        do {
+            allRoomsNew = true;
+            for (int i = 0; i < roomsToBook.length; i++) {
+                int rmNm = rand.nextInt(hotel.get_roomCount() - 1);
+                for (var oldNum : roomsToBook) {
+                    if (rmNm == oldNum) {
+                        allRoomsNew = false;
+                        break;
+                    }
+                }
+                if(allRoomsNew) {
+                    roomsToBook[i] = rmNm;
+                }
+            }
+        } while(!allRoomsNew);
+
+        return roomsToBook;
     }
 }

@@ -15,9 +15,10 @@ import java.util.Random;
  * The Main Class is for running the Hotel simulation
  */
 public class Main {
-    static final int MAX_ROOMS = 30;    /**< The maximum number of Rooms that a Hotel can have */
-    static final int MIN_ROOMS = 10;    /**< The minimum number of Rooms that a Hotel can have */
-    static final int USER_COUNT = 1000; /**< The count of Users that will interact with the Hotel */
+    static final int MAX_RUNTIME = 15000;   //!< The maximum runtime of a Thread in milliseconds
+    static final int MAX_ROOMS = 30;        //!< The maximum number of Rooms that a Hotel can have
+    static final int MIN_ROOMS = 10;        //!< The minimum number of Rooms that a Hotel can have
+    static final int USER_COUNT = 1000;     //!< The count of Users that will interact with the Hotel
 
 
     /**
@@ -73,7 +74,7 @@ public class Main {
 
             // Complete the simulation
             for (var user : users) {
-                user.join(0);
+                user.join(MAX_RUNTIME);
                 //System.out.println("User [" + user.getName() + "] stopped");
             }
         } catch (InterruptedException ie) {
