@@ -13,12 +13,12 @@ import java.util.Random;
 
 /**
  * The User Class extending the Thread Class
- *
+ * <p>
  * The User Class represents a user of the Hotel system.  A User is a Thread, and so several can access the Hotel
  */
 public class User extends Thread {
     // Constants
-    final int MAX_BOOKING_DURATION = 31;    /**< The maximum permitted duration for a Booking */
+    final int MAX_BOOKING_DURATION = 21;    /**< The maximum permitted duration for a Booking */
     final int FUTURE_LIMIT = 365;           /**< The maximum length of time into the future to Book a Room */
     final int BOOKING_ATTEMPTS = 3;         /**< The maximum amount of attempts a User can have when trying to Book */
 
@@ -49,7 +49,7 @@ public class User extends Thread {
 
     /**
      * Main Thread `run` method
-     *
+     * <p>
      * This method is called by the `start` method inherited by the parent Thread Class.  Executes the Thread
      */
     public void run() {
@@ -92,7 +92,7 @@ public class User extends Thread {
     /**
      * Creates a Booking Reference number to be assigned to a new Booking
      *
-     * @return  A new Booking Reference of the Long type
+     * @return A new Booking Reference of the Long type
      */
     private static String createBookingRef() {
         Random rand = new Random();
@@ -104,7 +104,8 @@ public class User extends Thread {
     /**
      * Create a new randomised Booking, and attempt to send it to the Hotel Bookings list.
      *
-     * @return  True if the Booking was added to the Hotel system successfully, False if it was not
+     * @return True if the Booking was added to the Hotel system successfully, False if it was not
+     *
      * @throws InterruptedException If the Thread is Interrupted at some point while in this method, throw an Exception
      */
     private boolean attemptToBook() throws InterruptedException {
@@ -183,15 +184,16 @@ public class User extends Thread {
         do {
             if (hotel.lock_hotel.tryLock()) {
                 try {
-//                    for (var bk : hotel.get_bookings()) {
-//                        if (bk.get_reference().equals(myBookingRef)) {
-//                            System.out.println("Booking [#" + myBookingRef + "] being updated from: \n\t" + (bk).toString());
-//                            break;
+                    if (!hotel.roomBooked(bookingSpan, roomChoice)) {
+//                        for (var bk : hotel.get_bookings()) {
+//                            if (bk.get_reference().equals(myBookingRef)) {
+//                                System.out.println("Booking [#" + myBookingRef + "] being updated from: \n\t" + (bk).toString());
+//                                break;
+//                            }
 //                        }
-//                    }
-
-                    if (!hotel.updateBooking(myBookingRef, bookingSpan, roomChoice)) {
-                        updateSuccessful = false;
+                        if (!hotel.updateBooking(myBookingRef, bookingSpan, roomChoice)) {
+                            updateSuccessful = false;
+                        }
                     }
                 } catch (NoSuchBookingException nsbe) {
                     System.err.println(nsbe.getMessage());
@@ -234,7 +236,7 @@ public class User extends Thread {
     /**
      * Creates a randomised time frame to assign to a new Booking
      *
-     * @return  The time frame in Days to assign to a new Booking
+     * @return The time frame in Days to assign to a new Booking
      */
     private int[] createBookingDuration() {
         Random rand = new Random();

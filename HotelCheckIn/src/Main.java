@@ -11,7 +11,7 @@ import java.util.Random;
 
 /**
  * The Main Class
- *
+ * <p>
  * The Main Class is for running the Hotel simulation
  */
 public class Main {
@@ -23,7 +23,7 @@ public class Main {
     /**
      * The main execution point to run the program from.  Callable from command line
      *
-     * @param args  Command line arguments to be passed to the program.  These are used to build the Rooms of the Hotel
+     * @param args Command line arguments to be passed to the program.  These are used to build the Rooms of the Hotel
      */
     public static void main(String[] args) {
         Hotel javaHotel;

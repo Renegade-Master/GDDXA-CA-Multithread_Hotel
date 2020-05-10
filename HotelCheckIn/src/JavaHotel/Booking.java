@@ -9,7 +9,7 @@ package JavaHotel;
 
 /**
  * The Booking Class
- *
+ * <p>
  * A Booking is a custom datatype that links a Reference number, at
  * least one Room, and at least one Day together
  */
@@ -22,9 +22,9 @@ public class Booking {
     /**
      * Default Parameterised Booking Constructor method
      *
-     * @param ref       The unique Reference String for the Booking
-     * @param days      The count of days to book the Room for
-     * @param roomNum   The number of the Room to book
+     * @param ref     The unique Reference String for the Booking
+     * @param days    The count of days to book the Room for
+     * @param roomNum The number of the Room to book
      */
     public Booking(String ref, int[] days, int roomNum) {
         this._reference = ref;
@@ -36,9 +36,9 @@ public class Booking {
     /**
      * Alternative Parameterised Booking Constructor method
      *
-     * @param ref        The unique Reference String for the Booking
-     * @param days       The count of days to book the Room for
-     * @param roomNums   The numbers of the Rooms to book
+     * @param ref      The unique Reference String for the Booking
+     * @param days     The count of days to book the Room for
+     * @param roomNums The numbers of the Rooms to book
      */
     public Booking(String ref, int[] days, int[] roomNums) {
         this._reference = ref;
@@ -54,7 +54,7 @@ public class Booking {
     /**
      * Getter method for returning the Reference of this Booking
      *
-     * @return  The Reference String for this Booking
+     * @return The Reference String for this Booking
      */
     public String get_reference() {
         return _reference;
@@ -64,7 +64,7 @@ public class Booking {
     /**
      * Getter method for returning the Room(s) that this Booking applies to
      *
-     * @return  The Room(s) that this Booking applies to
+     * @return The Room(s) that this Booking applies to
      */
     public Room[] get_rooms() {
         return _rooms;
@@ -89,7 +89,7 @@ public class Booking {
     /**
      * The overridden `toString()` method for printing this Booking
      *
-     * @return  The structure of this Booking in String format, ready for printing
+     * @return The structure of this Booking in String format, ready for printing
      */
     @Override
     public String toString() {
