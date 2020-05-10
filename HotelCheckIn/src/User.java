@@ -64,7 +64,7 @@ public class User extends Thread {
         boolean bookedSuccessfully = false;
         try {
             for (int i = 0; i < BOOKING_ATTEMPTS; i++) {
-                if(rand.nextInt(100) < CHANCE_TO_BOOK_MULTI) {  // Randomly book one or more rooms
+                if (rand.nextInt(100) < CHANCE_TO_BOOK_MULTI) {  // Randomly book one or more rooms
                     if (!attemptToBook(1)) {
                         sleep(50);    // Unsuccessful booking, try again
                     } else {
@@ -113,18 +113,6 @@ public class User extends Thread {
     ////////////////////////
     // Non-Thread Methods //
     ////////////////////////
-
-
-    /**
-     * Creates a Booking Reference number to be assigned to a new Booking
-     *
-     * @return A new Booking Reference of the Long type
-     */
-    private static String createBookingRef() {
-        Random rand = new Random();
-
-        return String.valueOf(Math.abs(rand.nextLong()));
-    }
 
 
     /**
@@ -274,6 +262,18 @@ public class User extends Thread {
 
 
     /**
+     * Creates a Booking Reference number to be assigned to a new Booking
+     *
+     * @return A new Booking Reference of the Long type
+     */
+    private static String createBookingRef() {
+        Random rand = new Random();
+
+        return String.valueOf(Math.abs(rand.nextLong()));
+    }
+
+
+    /**
      * Creates a randomised time frame to assign to a new Booking
      *
      * @return The time frame in Days to assign to a new Booking
@@ -311,7 +311,8 @@ public class User extends Thread {
      * Creates a randomised choice of Room Numbers for booking
      *
      * @param roomCount The count of Room Numbers to generate
-     * @return  An array of Integer values for the Room Numbers
+     *
+     * @return An array of Integer values for the Room Numbers
      */
     private int[] createRoomsToBook(int roomCount) {
         Random rand = new Random();
@@ -328,11 +329,11 @@ public class User extends Thread {
                         break;
                     }
                 }
-                if(allRoomsNew) {
+                if (allRoomsNew) {
                     roomsToBook[i] = rmNm;
                 }
             }
-        } while(!allRoomsNew);
+        } while (!allRoomsNew);
 
         return roomsToBook;
     }
